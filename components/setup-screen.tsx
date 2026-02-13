@@ -28,14 +28,17 @@ function generateId() {
   return Math.random().toString(36).substring(2, 9)
 }
 
-function createEmptyQuestion(): QuizQuestion {
+function createEmptyQuestion(id?: string): QuizQuestion {
   return {
-    id: generateId(),
+    id: id ?? generateId(),
     question: "",
     options: ["", ""],
     correctIndex: 0,
   }
 }
+
+/** Stable ID for initial question - avoids hydration mismatch (Math.random differs on server vs client) */
+const INITIAL_QUESTION_ID = "q0"
 
 const STEPS: { key: SetupStep; label: string; number: number }[] = [
   { key: "names", label: "About You Two", number: 1 },
@@ -48,7 +51,7 @@ export function SetupScreen({ onComplete, onBack }: SetupScreenProps) {
   const [partnerName, setPartnerName] = useState("")
   const [senderName, setSenderName] = useState("")
   const [questions, setQuestions] = useState<QuizQuestion[]>([
-    createEmptyQuestion(),
+    createEmptyQuestion(INITIAL_QUESTION_ID),
   ])
   const [finalMessage, setFinalMessage] = useState("")
   const [finalImageUrl, setFinalImageUrl] = useState<string | undefined>()
