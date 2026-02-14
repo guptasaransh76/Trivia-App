@@ -208,6 +208,7 @@ export function PreviewScreen({ quiz, onStartQuiz, onEdit }: PreviewScreenProps)
                         src={q.imageUrl}
                         alt={`Preview for question ${i + 1}`}
                         className="h-full w-full object-contain"
+                        referrerPolicy="no-referrer"
                       />
                     </div>
                   )}

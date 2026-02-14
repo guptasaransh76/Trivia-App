@@ -119,6 +119,7 @@ export function QuestionEditor({
                 src={question.imageUrl}
                 alt={`Question ${index + 1} image`}
                 className="h-full w-full object-contain"
+                referrerPolicy="no-referrer"
               />
               <button
                 onClick={() => onUpdate({ ...question, imageUrl: undefined })}

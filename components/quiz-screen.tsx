@@ -193,6 +193,7 @@ export function QuizScreen({
                   src={currentQuestion.imageUrl}
                   alt="A cherished memory"
                   className="h-full w-full object-contain"
+                  referrerPolicy="no-referrer"
                 />
               </div>
             )}
@@ -283,6 +284,7 @@ export function QuizScreen({
                   src={currentQuestion.imageUrl}
                   alt={`Question ${currentIndex + 1}`}
                   className="h-full w-full object-contain"
+                  referrerPolicy="no-referrer"
                 />
               </div>
             )}

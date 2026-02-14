@@ -230,6 +230,7 @@ export function FinalReveal({
                 src={finalImageUrl}
                 alt="A special memory"
                 className="h-full w-full object-contain"
+                referrerPolicy="no-referrer"
               />
             </div>
           )}
@@ -409,6 +410,7 @@ export function FinalReveal({
                     src={memory.imageUrl}
                     alt={`Memory from question ${i + 1}`}
                     className="h-full w-full object-contain"
+                    referrerPolicy="no-referrer"
                   />
                 </div>
               )}

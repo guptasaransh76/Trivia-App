@@ -287,6 +287,7 @@ export function SetupScreen({ onComplete, onBack }: SetupScreenProps) {
                         src={finalImageUrl}
                         alt="Final reveal photo"
                         className="h-full w-full object-contain"
+                        referrerPolicy="no-referrer"
                       />
                       <button
                         onClick={() => setFinalImageUrl(undefined)}
