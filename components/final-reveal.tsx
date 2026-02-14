@@ -13,7 +13,6 @@ interface FinalRevealProps {
   finalMessage?: string
   finalImageUrl?: string
   questions: QuizQuestion[]
-  onRestart: () => void
 }
 
 interface Sparkle {
@@ -32,7 +31,6 @@ export function FinalReveal({
   finalMessage,
   finalImageUrl,
   questions,
-  onRestart,
 }: FinalRevealProps) {
   // 0=score, 1=envelope, 2=revealed question, 3=response, 4=memory wall
   const [stage, setStage] = useState(0)
@@ -44,6 +42,10 @@ export function FinalReveal({
       x: number
       y: number
       size: number
+      dx: number
+      rotate: number
+      delay: number
+      duration: number
     }>
   >([])
   const [visibleMemories, setVisibleMemories] = useState(0)
@@ -86,11 +88,15 @@ export function FinalReveal({
     setResponse(answer)
     setStage(3)
     if (answer === "yes") {
-      const hearts = Array.from({ length: 30 }, (_, i) => ({
+      const hearts = Array.from({ length: 50 }, (_, i) => ({
         id: i,
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        size: Math.random() * 20 + 12,
+        x: 50 + (Math.random() - 0.5) * 20,
+        y: 58 + (Math.random() - 0.5) * 16,
+        size: Math.random() * 18 + 14,
+        dx: (Math.random() - 0.5) * 40,
+        rotate: Math.random() * 360,
+        delay: Math.random() * 0.4,
+        duration: 2.8 + Math.random() * 1.5,
       }))
       setBurstHearts(hearts)
     }
@@ -282,21 +288,31 @@ export function FinalReveal({
   // Stage 3: Response
   if (stage === 3) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
+      <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center relative overflow-hidden">
+        {/* Expanding ring burst for "Yes" */}
+        {response === "yes" && (
+          <div
+            className="pointer-events-none absolute left-1/2 top-[58%] -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-4 border-primary/60 animate-heart-burst-ring"
+            aria-hidden="true"
+          />
+        )}
+
         {/* Burst hearts for "Yes" */}
         {response === "yes" &&
           burstHearts.map((h) => (
             <div
               key={h.id}
-              className="pointer-events-none absolute animate-float-heart"
+              className="pointer-events-none absolute animate-heart-burst-yes"
               style={{
                 left: `${h.x}%`,
                 top: `${h.y}%`,
                 fontSize: `${h.size}px`,
-                animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${3 + Math.random() * 3}s`,
+                animationDelay: `${h.delay}s`,
+                animationDuration: `${h.duration}s`,
                 color: "hsl(346, 77%, 60%)",
-              }}
+                "--heart-dx": `${h.dx}vw`,
+                "--heart-rotate": `${h.rotate}deg`,
+              } as React.CSSProperties}
               aria-hidden="true"
             >
               <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor">
@@ -305,7 +321,7 @@ export function FinalReveal({
             </div>
           ))}
 
-        <div className="animate-bounce-in max-w-md">
+        <div className="animate-bounce-in max-w-md relative z-10">
           {response === "yes" ? (
             <>
               <div className="relative mx-auto mb-6 flex h-28 w-28 items-center justify-center">
@@ -352,14 +368,6 @@ export function FinalReveal({
               </p>
             </>
           )}
-
-          <Button
-            onClick={onRestart}
-            variant="ghost"
-            className="rounded-full text-muted-foreground hover:text-foreground"
-          >
-            Start Over
-          </Button>
         </div>
       </div>
     )
@@ -438,14 +446,6 @@ export function FinalReveal({
             <p className="font-serif text-xl font-semibold text-primary">
               {partnerName} & {senderName}
             </p>
-
-            <Button
-              onClick={onRestart}
-              variant="ghost"
-              className="mt-6 rounded-full text-muted-foreground hover:text-foreground"
-            >
-              Start Over
-            </Button>
           </div>
         )}
       </div>

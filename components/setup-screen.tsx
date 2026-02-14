@@ -304,7 +304,7 @@ export function SetupScreen({ onComplete, onBack }: SetupScreenProps) {
                         <ImagePlus className="mb-2 h-8 w-8 text-muted-foreground" />
                       )}
                       <span className="text-sm text-muted-foreground">
-                        Upload a photo of you two (max 2MB)
+                        Upload a photo of you two (max 7MB)
                       </span>
                       <span className="mt-1 text-xs text-muted-foreground/60">
                         This appears on the big question screen

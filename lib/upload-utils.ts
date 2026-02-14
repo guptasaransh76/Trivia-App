@@ -1,7 +1,7 @@
 import { createSupabaseClient } from "@/lib/supabase"
 
 const BUCKET = "quiz-images"
-const MAX_FILE_BYTES = 2 * 1024 * 1024 // 2MB
+const MAX_FILE_BYTES = 7 * 1024 * 1024 // 7MB
 
 export function getExtFromFile(file: File): string {
   const mimeToExt: Record<string, string> = {
@@ -23,7 +23,7 @@ export async function uploadImageToStorage(
   file: File
 ): Promise<string> {
   if (file.size > MAX_FILE_BYTES) {
-    throw new Error("Image must be under 2MB")
+    throw new Error("Image must be under 7MB")
   }
   const supabase = createSupabaseClient()
   const { error } = await supabase.storage

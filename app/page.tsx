@@ -57,13 +57,6 @@ export default function Page() {
     setScreen("final-reveal")
   }
 
-  const handleRestart = () => {
-    setScreen("landing")
-    setQuiz(null)
-    setFinalScore(0)
-    setIsFromLink(false)
-  }
-
   if (urlLoadState === "loading") {
     return (
       <main className="relative flex min-h-screen items-center justify-center">
@@ -138,7 +131,6 @@ export default function Page() {
           finalMessage={quiz.finalMessage}
           finalImageUrl={quiz.finalImageUrl}
           questions={quiz.questions}
-          onRestart={handleRestart}
         />
       )}
     </main>

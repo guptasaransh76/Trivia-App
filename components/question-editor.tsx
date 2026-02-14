@@ -148,7 +148,7 @@ export function QuestionEditor({
                 {uploading ? "Uploading..." : "Drop a photo or click to upload"}
               </span>
               <span className="mt-1 text-xs text-muted-foreground/60">
-                A memory photo adds magic to the question (max 2MB)
+                A memory photo adds magic to the question (max 7MB)
               </span>
               {uploadError && (
                 <span className="mt-2 text-xs text-destructive">{uploadError}</span>
