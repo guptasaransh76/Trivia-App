@@ -38,7 +38,7 @@ export function QuestionEditor({
     setUploading(true)
     try {
       const ext = getExtFromFile(file)
-      const path = `${quizId}/q-${question.id}.${ext}`
+      const path = `${quizId}/question-${question.id}.${ext}`
       const url = await uploadImageToStorage(path, file)
       onUpdate({ ...question, imageUrl: url })
     } catch (err) {
