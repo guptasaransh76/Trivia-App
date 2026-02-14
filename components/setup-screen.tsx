@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { QuestionEditor } from "@/components/question-editor"
+import { uploadImageToStorage, getExtFromFile } from "@/lib/upload-utils"
 import type { QuizQuestion, ValentineQuiz, SetupStep } from "@/lib/valentine-types"
 
 interface SetupScreenProps {
@@ -56,6 +57,9 @@ export function SetupScreen({ onComplete, onBack }: SetupScreenProps) {
   const [finalMessage, setFinalMessage] = useState("")
   const [finalImageUrl, setFinalImageUrl] = useState<string | undefined>()
   const [errors, setErrors] = useState<string[]>([])
+  const [finalImageUploading, setFinalImageUploading] = useState(false)
+  const [finalImageError, setFinalImageError] = useState<string | null>(null)
+  const [draftId] = useState(() => crypto.randomUUID())
 
   const currentStepIndex = STEPS.findIndex((s) => s.key === currentStep)
 
@@ -75,15 +79,22 @@ export function SetupScreen({ onComplete, onBack }: SetupScreenProps) {
     setQuestions(questions.filter((_, i) => i !== index))
   }
 
-  const handleFinalImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFinalImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (ev) => {
-        setFinalImageUrl(ev.target?.result as string)
-      }
-      reader.readAsDataURL(file)
+    if (!file?.type.startsWith("image/")) return
+    setFinalImageError(null)
+    setFinalImageUploading(true)
+    try {
+      const ext = getExtFromFile(file)
+      const path = `${draftId}/final.${ext}`
+      const url = await uploadImageToStorage(path, file)
+      setFinalImageUrl(url)
+    } catch (err) {
+      setFinalImageError(err instanceof Error ? err.message : "Upload failed")
+    } finally {
+      setFinalImageUploading(false)
     }
+    e.target.value = ""
   }
 
   const validateStep = useCallback((): boolean => {
@@ -132,6 +143,7 @@ export function SetupScreen({ onComplete, onBack }: SetupScreenProps) {
   const handleSubmit = () => {
     if (!validateStep()) return
     onComplete({
+      id: draftId,
       partnerName: partnerName.trim(),
       senderName: senderName.trim(),
       questions,
@@ -231,6 +243,7 @@ export function SetupScreen({ onComplete, onBack }: SetupScreenProps) {
                   key={question.id}
                   question={question}
                   index={index}
+                  quizId={draftId}
                   onUpdate={(updated) => updateQuestion(index, updated)}
                   onDelete={() => deleteQuestion(index)}
                   canDelete={questions.length > 1}
@@ -284,19 +297,27 @@ export function SetupScreen({ onComplete, onBack }: SetupScreenProps) {
                       </button>
                     </div>
                   ) : (
-                    <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border py-8 transition-colors hover:border-primary/50">
-                      <ImagePlus className="mb-2 h-8 w-8 text-muted-foreground" />
+                    <label className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border py-8 transition-colors hover:border-primary/50 ${finalImageUploading ? "pointer-events-none opacity-70" : ""}`}>
+                      {finalImageUploading ? (
+                        <span className="mb-2 text-sm text-muted-foreground">Uploading...</span>
+                      ) : (
+                        <ImagePlus className="mb-2 h-8 w-8 text-muted-foreground" />
+                      )}
                       <span className="text-sm text-muted-foreground">
-                        Upload a photo of you two
+                        Upload a photo of you two (max 2MB)
                       </span>
                       <span className="mt-1 text-xs text-muted-foreground/60">
                         This appears on the big question screen
                       </span>
+                      {finalImageError && (
+                        <span className="mt-2 text-xs text-destructive">{finalImageError}</span>
+                      )}
                       <input
                         type="file"
                         accept="image/*"
                         onChange={handleFinalImageUpload}
                         className="sr-only"
+                        disabled={finalImageUploading}
                       />
                     </label>
                   )}

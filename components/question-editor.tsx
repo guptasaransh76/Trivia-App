@@ -1,16 +1,18 @@
 "use client"
 
 import { useState } from "react"
-import { ImagePlus, X, Check, Trash2, Lightbulb, MessageCircleHeart } from "lucide-react"
+import { ImagePlus, X, Check, Trash2, Lightbulb, MessageCircleHeart, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { uploadImageToStorage, getExtFromFile } from "@/lib/upload-utils"
 import type { QuizQuestion } from "@/lib/valentine-types"
 
 interface QuestionEditorProps {
   question: QuizQuestion
   index: number
+  quizId: string
   onUpdate: (question: QuizQuestion) => void
   onDelete: () => void
   canDelete: boolean
@@ -19,6 +21,7 @@ interface QuestionEditorProps {
 export function QuestionEditor({
   question,
   index,
+  quizId,
   onUpdate,
   onDelete,
   canDelete,
@@ -26,29 +29,36 @@ export function QuestionEditor({
   const [dragOver, setDragOver] = useState(false)
   const [showHint, setShowHint] = useState(!!question.hint)
   const [showLoveNote, setShowLoveNote] = useState(!!question.loveNote)
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+
+  const doUpload = async (file: File) => {
+    if (!file.type.startsWith("image/")) return
+    setUploadError(null)
+    setUploading(true)
+    try {
+      const ext = getExtFromFile(file)
+      const path = `${quizId}/q-${question.id}.${ext}`
+      const url = await uploadImageToStorage(path, file)
+      onUpdate({ ...question, imageUrl: url })
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Upload failed")
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (ev) => {
-        onUpdate({ ...question, imageUrl: ev.target?.result as string })
-      }
-      reader.readAsDataURL(file)
-    }
+    if (file) doUpload(file)
+    e.target.value = ""
   }
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     setDragOver(false)
     const file = e.dataTransfer.files?.[0]
-    if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader()
-      reader.onload = (ev) => {
-        onUpdate({ ...question, imageUrl: ev.target?.result as string })
-      }
-      reader.readAsDataURL(file)
-    }
+    if (file) doUpload(file)
   }
 
   const updateOption = (optionIndex: number, value: string) => {
@@ -127,20 +137,28 @@ export function QuestionEditor({
                 dragOver
                   ? "border-primary bg-primary/5"
                   : "border-border hover:border-primary/50"
-              }`}
+              } ${uploading ? "pointer-events-none opacity-70" : ""}`}
             >
-              <ImagePlus className="mb-2 h-8 w-8 text-muted-foreground" />
+              {uploading ? (
+                <Loader2 className="mb-2 h-8 w-8 animate-spin text-muted-foreground" />
+              ) : (
+                <ImagePlus className="mb-2 h-8 w-8 text-muted-foreground" />
+              )}
               <span className="text-sm text-muted-foreground">
-                Drop a photo or click to upload
+                {uploading ? "Uploading..." : "Drop a photo or click to upload"}
               </span>
               <span className="mt-1 text-xs text-muted-foreground/60">
-                A memory photo adds magic to the question
+                A memory photo adds magic to the question (max 2MB)
               </span>
+              {uploadError && (
+                <span className="mt-2 text-xs text-destructive">{uploadError}</span>
+              )}
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
                 className="sr-only"
+                disabled={uploading}
               />
             </label>
           )}

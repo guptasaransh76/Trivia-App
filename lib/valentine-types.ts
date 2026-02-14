@@ -9,6 +9,7 @@ export interface QuizQuestion {
 }
 
 export interface ValentineQuiz {
+  id?: string // Optional; set when using client-side image uploads
   partnerName: string
   senderName: string
   questions: QuizQuestion[]
