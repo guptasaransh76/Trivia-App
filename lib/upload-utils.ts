@@ -1,4 +1,3 @@
-import heic2any from "heic2any"
 import { createSupabaseClient } from "@/lib/supabase"
 
 const BUCKET = "quiz-images"
@@ -28,6 +27,7 @@ async function ensureStandardFormat(file: File): Promise<File> {
     file.name.toLowerCase().endsWith(".heif")
   if (!isHeic) return file
 
+  const heic2any = (await import("heic2any")).default
   const converted = await heic2any({
     blob: file,
     toType: "image/jpeg",
