@@ -113,12 +113,12 @@ export function QuestionEditor({
         {/* Image Upload */}
         <div className="mb-5">
           {question.imageUrl ? (
-            <div className="relative overflow-hidden rounded-xl">
+            <div className="relative aspect-square w-full max-w-xs mx-auto overflow-hidden rounded-xl bg-muted/20">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={question.imageUrl}
                 alt={`Question ${index + 1} image`}
-                className="h-48 w-full object-cover"
+                className="h-full w-full object-contain"
               />
               <button
                 onClick={() => onUpdate({ ...question, imageUrl: undefined })}

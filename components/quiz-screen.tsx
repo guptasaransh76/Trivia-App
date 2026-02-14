@@ -187,12 +187,12 @@ export function QuizScreen({
 
             {/* Question image if present */}
             {currentQuestion.imageUrl && (
-              <div className="mx-auto mb-6 max-w-xs overflow-hidden rounded-2xl shadow-md">
+              <div className="mx-auto mb-6 aspect-square w-full max-w-xs overflow-hidden rounded-2xl bg-muted/20 shadow-md">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={currentQuestion.imageUrl}
                   alt="A cherished memory"
-                  className="h-48 w-full object-cover"
+                  className="h-full w-full object-contain"
                 />
               </div>
             )}
@@ -277,12 +277,12 @@ export function QuizScreen({
           <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
             {/* Image */}
             {currentQuestion.imageUrl && (
-              <div className="mb-5 overflow-hidden rounded-xl">
+              <div className="mb-5 aspect-square w-full overflow-hidden rounded-xl bg-muted/20">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={currentQuestion.imageUrl}
                   alt={`Question ${currentIndex + 1}`}
-                  className="h-52 w-full object-cover"
+                  className="h-full w-full object-contain"
                 />
               </div>
             )}

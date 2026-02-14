@@ -202,12 +202,12 @@ export function PreviewScreen({ quiz, onStartQuiz, onEdit }: PreviewScreenProps)
                     )}
                   </div>
                   {q.imageUrl && (
-                    <div className="mt-2 overflow-hidden rounded-lg">
+                    <div className="mt-2 aspect-square w-20 overflow-hidden rounded-lg bg-muted/20">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={q.imageUrl}
                         alt={`Preview for question ${i + 1}`}
-                        className="h-20 w-full object-cover"
+                        className="h-full w-full object-contain"
                       />
                     </div>
                   )}

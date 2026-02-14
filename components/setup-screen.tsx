@@ -281,12 +281,12 @@ export function SetupScreen({ onComplete, onBack }: SetupScreenProps) {
                     A special photo for the reveal (optional)
                   </Label>
                   {finalImageUrl ? (
-                    <div className="relative overflow-hidden rounded-xl">
+                    <div className="relative aspect-square w-full max-w-xs mx-auto overflow-hidden rounded-xl bg-muted/20">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={finalImageUrl}
                         alt="Final reveal photo"
-                        className="h-52 w-full object-cover"
+                        className="h-full w-full object-contain"
                       />
                       <button
                         onClick={() => setFinalImageUrl(undefined)}

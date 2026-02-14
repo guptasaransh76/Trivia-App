@@ -224,12 +224,12 @@ export function FinalReveal({
         <div className="animate-bounce-in max-w-md">
           {/* Final image */}
           {finalImageUrl && (
-            <div className="mx-auto mb-6 h-40 w-40 overflow-hidden rounded-full border-4 border-primary/20 shadow-lg">
+            <div className="mx-auto mb-6 aspect-square w-40 overflow-hidden rounded-2xl border-4 border-primary/20 bg-muted/20 shadow-lg">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={finalImageUrl}
                 alt="A special memory"
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain"
               />
             </div>
           )}
@@ -403,12 +403,12 @@ export function FinalReveal({
             >
               {/* Memory image */}
               {memory.imageUrl && (
-                <div className="overflow-hidden">
+                <div className="aspect-square w-full overflow-hidden bg-muted/20">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={memory.imageUrl}
                     alt={`Memory from question ${i + 1}`}
-                    className="h-56 w-full object-cover"
+                    className="h-full w-full object-contain"
                   />
                 </div>
               )}
